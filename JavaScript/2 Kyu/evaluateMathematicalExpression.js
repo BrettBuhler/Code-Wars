@@ -1,125 +1,148 @@
+/*
+Parentheses
+You need to support multiple levels of nested parentheses, ex. (2 / (2 + 3.33) * 4) - -6
+
+Whitespace
+There may or may not be whitespace between numbers and operators.
+
+An addition to this rule is that the minus sign (-) used for negating numbers and parentheses will never be separated by whitespace. I.e all of the following are valid expressions.
+
+1-1    // 0
+1 -1   // 0
+1- 1   // 0
+1 - 1  // 0
+1- -1  // 2
+1 - -1 // 2
+1--1   // 2
+
+6 + -(4)   // 2
+6 + -( -4) // 10
+And the following are invalid expressions
+
+1 - - 1    // Invalid
+1- - 1     // Invalid
+6 + - (4)  // Invalid
+6 + -(- 4) // Invalid
+Validation
+You do not need to worry about validation - you will only receive valid mathematical expressions following the above rules.
+
+Restricted APIs
+NOTE: Both eval and Function are disabled.
+*/
+// MY SOLUTION
 const calc = (str) => {
-    if (str[0] = '-' && str[1] == '-'){
-        str = str.split('')
-        str.shift()
-        str.shift()
-        str = str.join('')
-    }
-    console.log('starting New calc call with:', str)
-    if (str.includes(' ')){
-        str = str.split(' ').join('')
-    }
-    while (str.includes('--')){
-        str = str.replace('--','+')
-    }
-    while (str.includes('(')){
-        str = parentheses(str)
-        console.log('after parenth:', str)
-    }
-    return Number(doMath(makeArr(str)))
+    str = str.split('').filter(x=> x!=" ").join('')
+    let opArr = toArr(str)
+    opArr = clean(opArr)
+    return Number(doMath(opArr))
 }
 
-const makeArr = (str) => {
-    str = str.replace('--','+')
-    str = str.replace('/+','/')
-    if (str[0] == '+'){
-        str = str.slice(1, str.length)
+const doMath = (arr) => {
+    const doOpp = (a, b, opp) => {
+        a = Number(a)
+        b = Number(b)
+        return  opp == '*' ? a * b :
+                opp == '/' ? a / b :
+                opp == '+' ? a + b :
+                opp == '-' ? a - b :
+                'ERR'
     }
-
-    console.log(str)
-    numArr = []
-    let temp = ''
-    for (let i = 0; i < str.length; i++){
-        if ('*/=+-'.includes(str[i])){
-            if (temp != ''){
-                numArr.push(temp)
-                temp = ''
+    const doOpps = (arr, opps) => {
+        let oppsCopy = [...arr]
+        for (let i = 0; i < oppsCopy.length; i++){
+            if (opps.includes(oppsCopy[i])){
+                let left = oppsCopy.slice(0,i-1)
+                let right = oppsCopy.slice(i+2, oppsCopy.length)
+                let mid = doOpp(oppsCopy[i-1], oppsCopy[i+1], oppsCopy[i])
+                oppsCopy = left.concat(mid).concat(right)
             }
-            numArr.push(str[i])
+        }
+        return oppsCopy
+    }
+    let copy = [...arr]
+    if (copy.length == 1) return Number(copy[0])
+
+    while(copy.includes('*') || copy.includes('/')){
+        copy = doOpps(copy, '*/')
+    }
+    while(copy.includes('-') || copy.includes('+')){
+        copy = doOpps(copy, '-+')
+    }
+    return copy
+    
+}
+
+const toArr = (str) => {
+    let temp = ''
+    let returnArr = []
+    for (let i = 0; i < str.length; i++){
+        if (str[i] == '('){
+            let parenthAndIndex = removeP(str, i)
+            if (!parenthAndIndex[0].includes('(')){
+                returnArr.push(calc(parenthAndIndex[0]).toString())
+            } else {
+                returnArr.push(parenthAndIndex[0])
+            }
+            i = parenthAndIndex[1]
+        }
+        else if ('+-*/'.includes(str[i])){
+            if (temp != '') returnArr.push(temp)
+            returnArr.push(str[i])
+            temp = ''
         } else {
             temp += str[i]
         }
     }
-    numArr.push(temp)
-    if (numArr[0] == '-'){
-        numArr.shift()
-        numArr[0] = Number(numArr[0]) * -1
+    if (temp != ''){
+        returnArr.push(temp)
     }
-    for (let i = 0; i < numArr.length; i++){
-        if (numArr[i] == '-' && '+-*/'.includes(numArr[i-1])){
-            let left = numArr.slice(0,i)
-            let right = numArr.slice(i+1,numArr.length)
-            right[0] = Number(right[0] * - 1)
-            numArr = left.concat(right)
+    for (let i = 0; i < returnArr.length; i++){
+        if (returnArr[i].includes('(')){
+            let left = returnArr.slice(0,i)
+            let mid = returnArr[i]
+            let right = returnArr.slice(i+1, returnArr.length)
+            mid = calc(mid)
+            returnArr = left.concat(mid).concat(right)
         }
     }
-    return numArr
+    return returnArr
 }
 
-const doOpps = (arr, ops) => {
-
-
-
-    while (arr.includes(ops[0]) || arr.includes(ops[1])){
-        for (let i = 0; i < arr.length; i++){
-            if (ops.includes(arr[i])){
-                let ans = doOpp(arr[i-1], arr[i+1], arr[i])
-                let left = arr.slice(0, i-1)
-                let right = arr.slice(i+2, arr.length)
-                arr = left.concat(ans)
-                if (right != undefined){
-                    arr = arr.concat(right)
-                }
-            }
-        }
-    }
-    return arr
-}
-const doOpp = (a, b, opp) => {
-    a = Number(a)
-    b = Number(b)
-    switch (opp) {
-        case '-':
-            return a - b
-        case '+':
-            return a + b
-        case '*':
-            return a * b
-        case '/':
-            return a / b
-    }
-}
-
-const doMath = (arr) => {
-    arr = doOpps(arr, '*/')
-    arr = doOpps(arr, '+-')
-    return arr.join('')
-}
-
-const parentheses = (str) => {
-    if (!str.includes('(')){
-        return str
-    }
+const removeP = (str, index) => {
     let left = 0
     let right = 0
-    let trip = false
-    let target
-    for (let i = 0; i < str.length; i++){
-        if (trip && str[i] == '(') left ++
-        if (trip && str[i] == ')') right ++
-        if (!trip && str[i] == '('){
-            trip = true
-            left ++
-        } else if (trip && left == right){
-            target = i
-            break;
+    let pos
+    for (let i = index; i < str.length; i++){
+        if ('()'.includes(str[i])){
+            str[i] == '(' ? left++ : right ++
+        }
+        if (left == right){
+            pos = i
+            break
         }
     }
-    let leftSide = str.slice(0, str.indexOf('('))
-    let rightSide = str.slice (target + 1, str.length)
-    let middle = str.slice(str.indexOf('(')+1, target)
-    middle = calc(middle)
-    return leftSide + middle + rightSide
+    let returnStr = str.slice(index+1,pos)
+
+    return [returnStr, pos]
 }
-console.log(calc('1-4'))
-console.log(calc('(1-2)+ -(-(-(-4)))'))
+
+const clean = (arr) => {
+    let copy = [...arr]
+    let count = 0
+    while (copy[0] == '-'){
+        count++
+        copy.shift()
+        if (copy[0] != '-' && typeof Number(copy[0]) == 'number' && count % 2 != 0){
+            copy[0] *= -1
+        }
+    }
+    for (let i = 0; i < copy.length; i++){
+        if (copy[i] == '-' && '-+*/'.includes(copy[i-1]) && typeof Number(copy[i+1]) == 'number'){
+            let left = copy.slice(0, i)
+            let right = copy.slice(i+1,copy.length)
+            right[0] *= -1
+            copy = left.concat(right)
+        }
+    }
+    return copy
+}
