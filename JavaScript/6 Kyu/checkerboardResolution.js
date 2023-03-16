@@ -1,27 +1,47 @@
 const countCheckerboard = (width, height, resolution) => {
-    let black = BigInt(0)
-    let total = BigInt(0)
-    let colour = false
+    let temp = []
+    let count = BigInt(0)
+    let black = false
     for (let i = BigInt(0); i < height; i += resolution){
-        if (colour){
-            if (width % resolution == 0 && width % BigInt(2) != 0){
-                black += (width / BigInt(2)) + BigInt(1)
-            } else {
-                black += width % resolution  + (width - (width % resolution))/BigInt(2)
-            }
+        if (!black){
+            temp.push(whiteRow(width, resolution))
         } else {
-            black += (width - (width % resolution))/BigInt(2)
+            temp.push(blackRow(width, resolution))
         }
-        colour = !colour
+        black = !black
         if (i + resolution > height){
-            total += (height - i) * black
-            black = BigInt(0)
+            count += temp[temp.length - 1] * (height - i)
         } else {
-            total += resolution * black
-            black = BigInt(0)
+            count += temp[temp.length - 1] * resolution
         }
     }
-    return total
+    return count
 }
 
+const whiteRow = (width, resolution) => {
+    if (width % resolution == BigInt(0)){
+            return (width / resolution) / BigInt(2)
+    }
+    if ((width / resolution) % BigInt(2) == 0){
+        return (width / resolution) * resolution / BigInt(2)
+    } else {
+        return (((width / resolution) / BigInt(2)) * resolution) + (width % resolution)
+    }
+}
+const blackRow = (width, resolution) => {
+    if (width % resolution == BigInt(0)){
+        if (width % BigInt(2) != 0){
+            return ((width / resolution) / BigInt(2)) + resolution
+        } else {
+            return (width / resolution) / BigInt(2)
+        }
+    }
+    if ((width / resolution) % BigInt(2) == 0){
+        return ((width / resolution) / BigInt(2)) * resolution + (width % resolution)
+    } else {
+        return (((width / resolution) / BigInt(2)) * resolution) + resolution
+    }
+}
+console.log(countCheckerboard(11n, 6n, 1n))
 console.log(countCheckerboard(11n, 6n, 2n))
+console.log(countCheckerboard(11n, 6n, 5n))
