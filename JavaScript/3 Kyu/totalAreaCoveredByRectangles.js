@@ -181,28 +181,86 @@ const getArea = (arr) => {
 */
 
 const calculate = (rects) => {
+    if (rects.length == 0){
+        return 0
+    }
+    let xValues = uniqueX(rects)
+    let xSplit = splitX(rects, xValues)
+    return joinY(xSplit).map(x=>(x[2] - x[0]) * (x[3] - x[1])).reduce((a,b)=>(a+b))
+}
+
+const uniqueX = (rects) => {
     let x = new Set()
-    let y = new Set()
     for (let i of rects){
         x.add(i[0])
         x.add(i[2])
-        y.add(i[1])
-        y.add(i[3])
     }
-    x = Array.from(x)
-    y = Array.from(y)
-    x.sort((a,b)=>a-b)
-    y.sort((a,b)=>a-b)
-    let arr = []
-    for (let i = 0; i < y.length-1; i++){
-        arr.push([])
-        for (let j = 0; j < x.length-1; j++){
-            arr[i].push([])
+    return Array.from(x).sort((a,b)=>a-b)
+}
+
+const splitX = (rects, xValues) => {
+    let returnArr = []
+    for (let i = 0; i < rects.length; i++){
+        splitOne([rects[i]], xValues).map(x=>returnArr.push(x))
+    }
+    return returnArr
+}
+
+const splitOne = (arr, xValues) => {
+    for (let i = 0; i < xValues.length; i++){
+        for (let j = 0; j < arr.length; j++){
+            if (xValues[i] > 0){
+                if (xValues[i] > arr[j][0] && xValues[i] < arr[j][2]){
+                    let left = [arr[j][0], arr[j][1], xValues[i], arr[j][3]]
+                    let right = [xValues[i], arr[j][1], arr[j][2], arr[j][3]]
+                    arr[j] = left
+                    arr.push(right)
+                }
+            }
         }
     }
-    console.log([x, y])
     return arr
 }
 
+const joinY = (rects) => {
+    let joined = {}
+    for (let i = 0; i < rects.length; i++){
+        if (joined[`${rects[i][0]},${rects[i][2]}`]){
+            let oldRects = joined[`${rects[i][0]},${rects[i][2]}`]
+            let newRects = []
+            for (let j = 0; j < oldRects.length; j++){
+                let toAdd = getY(rects[i], oldRects[j])
+                if (toAdd.length == 4){
+                    newRects.push(toAdd)
+                } else {
+                    newRects.push(toAdd[0])
+                    newRects.push(toAdd[1])
+                }
+            }
+            joined[`${rects[i][0]},${rects[i][2]}`] = newRects
+        } else {
+            joined[`${rects[i][0]},${rects[i][2]}`] = [rects[i]]
+        }
+    }
+    return Object.entries(joined).map(x=>x[1]).flat()
+}
 
-console.log(calculate([[0,0,1,1], [2,4,5,6] ,[0,0,2,2]]))
+const getY = (rect1, rect2) => {
+    if ((rect1[3] >= rect2[1] && rect1[3] <= rect2[3]) || rect2[3] >= rect1[1] && rect2[3] <= rect1[3]){
+        let y1 = rect1[1] < rect2[1] ? rect1[1] : rect2[1]
+        let y2 = rect1[3] > rect2[3] ? rect1[3] : rect2[3]
+        return [rect1[0], y1, rect1[2], y2]
+    }
+    return [rect1, rect2]
+}
+
+//should be 38
+console.log(calculate([
+    [ 1, 4, 5, 6 ],
+    [ 2, 5, 6, 7 ],
+    [ 3, 6, 7, 8 ],
+    [ 4, 7, 8, 9 ],
+    [ 2, 3, 6, 5 ],
+    [ 3, 2, 7, 4 ],
+    [ 4, 1, 8, 3 ]
+  ]))
