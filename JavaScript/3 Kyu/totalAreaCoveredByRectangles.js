@@ -181,20 +181,28 @@ const getArea = (arr) => {
 */
 
 const calculate = (rects) => {
-    let dict = {}
-    for (let i = 0; i < rects.length; i++){
-        for (let y = rects[i][1]; y < rects[i][3]; y++){
-            for (let x = rects[i][0]; x < rects[i][2]; x++){
-                if (dict[`${x},${y}`]){
-                    dict[`${x},${y}`]++
-                } else {
-                    dict[`${x},${y}`] = 1
-                }
-            }
+    let x = new Set()
+    let y = new Set()
+    for (let i of rects){
+        x.add(i[0])
+        x.add(i[2])
+        y.add(i[1])
+        y.add(i[3])
+    }
+    x = Array.from(x)
+    y = Array.from(y)
+    x.sort((a,b)=>a-b)
+    y.sort((a,b)=>a-b)
+    let arr = []
+    for (let i = 0; i < y.length-1; i++){
+        arr.push([])
+        for (let j = 0; j < x.length-1; j++){
+            arr[i].push([])
         }
     }
-    return Object.keys(dict).length
+    console.log([x, y])
+    return arr
 }
 
 
-console.log(calculate([[0,0,1,1], [0,0,2,2]]))
+console.log(calculate([[0,0,1,1], [2,4,5,6] ,[0,0,2,2]]))
