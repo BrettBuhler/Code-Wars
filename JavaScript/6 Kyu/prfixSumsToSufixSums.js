@@ -42,13 +42,6 @@ Then following the rules, you can calculate the suffix sums of A.
 // [1, 3, 6, 10, 15]),[15, 14, 12, 9, 5]
 
 const prefixSumsToSuffixSums = (arr) => {
-    let sum = 0
-    let arr2 = []
-    for (let i = 0; i < arr.length; i++) {
-        sum += Math.abs(sum - arr[i])
-        arr[2].push(sum)
-    }
-    return arr2
+    return [arr[arr.length-1]].concat(arr.slice(0,arr.length-1).map(x =>arr[arr.length-1]-x))
 }
-console.log('hi')
 console.log(prefixSumsToSuffixSums([1,3,6,10,15]))
