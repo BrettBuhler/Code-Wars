@@ -50,54 +50,11 @@ const getReverseDiag = (n) => {
 */
 
 const countTriangles = (n) => {
-    console.log(getSingles(n))
-    let count = 0
-    for (let i = 2; i <=n; i++){
-        count += 4 * countTrianglesOfXLength(i,n)
-    }
-    count += diagSweep(n).map(x=>4 * x).reduce((a,b)=>a+b)
-    console.log(getSingles(n))
-    count += getSingles(n)
-    return count
-}
-const countTrianglesOfXLength = (len, n) => {
-    let height = getHeightOfXLengthTriangle(len)
-    return (n - (len - 1)) * (n - (height - 1))
+    let singles = n**2 * 8
+    if (n >= 2){
 
-}
-const getHeightOfXLengthTriangle = (len) => {
-    let height = 0
-    for (let i = 1; i <= len; i++){
-        if (i%2 !== 0){
-            height++
-        }
+    } else {
+        return singles
     }
-    return height
-}
-
-const diagSweep = (n) => {
-    let arr = []
-    for (let i = 2; i <= n; i++){
-        arr.push(i)
-        if (i === n){
-            for (let j = i - 1; j >=2; j--){
-                arr.push(j)
-            }
-        }
-    }
-    return arr.map(x=>diagSum(x))
-}
-
-const diagSum = (n) => {
-    let arr = []
-    for (let i = n - 1; i > 0; i--){
-        arr.push(i)
-    }
-    return arr.map((x,i)=>arr.slice(i).reduce((a,b)=>a+b)).reduce((a,b)=>a+b)
-}
-
-const getSingles = (n) => {
-    let squares = Math.pow(n,2)
-    return squares * 8
 }
 console.log(countTriangles(3))
