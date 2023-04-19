@@ -1,41 +1,32 @@
-/*
-const solution = (s,t) => {
-    let runs = []
+const solution = (s, t) => {
+    //Math.min(speed / 3 + 1, (time + 1) / 2)
+    if (s === 1){
+        return t + 1
+    }
+    let str = ''
+    let sCount = 0
     for (let i = 0; i < t; i++){
-        if (runs.length === 0){
-            runs.push('1')
-            runs.push('2')
-        } else {
-            let newRuns = []
-            for (let j = 0; j < runs.length; j++){
-                if (runs[j][runs[j].length-1] === '2'){
-                    runs[j] += '3'
-                } else {
-                    newRuns.push(runs[j] + '2')
-                    runs[j] += '1'
-                }
+        if (i % 2 === 0){
+            if (sCount >= s - 1){
+                str += 'r'
+            } else {
+                str += 's'
+                sCount++
             }
-            runs = runs.concat(newRuns)
+        } else {
+            str += 'r'
         }
     }
-    return runs.map(x=>{
-        let distance = 0
-        let speed = s
-        for (let i = 0; i < x.length; i++){
-            if (x[i] == '2'){
-                distance += (2 * speed)
-                speed--
-            } else {
-                distance += speed
-            }
+    console.log(str.split('').reverse().length)
+    return str.split('').reverse().reduce((a,b)=>{
+        if (b === 'r'){
+            return a + s
+        } else {
+            s--
+            return a + (2 * (s + 1))
         }
-        return distance
-    }).sort()[0]
+    },0)
 }
-*/
-
-const solution = (speed, time) => Math.min(speed / 3 + 1, (time + 1) / 2)
 
 
-
-console.log(solution(2,4))
+console.log(solution(56,141))
