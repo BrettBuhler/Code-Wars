@@ -1,0 +1,14 @@
+/*
+Given the following table 'decimals':
+
+** decimals table schema **
+
+id
+number1
+number2
+Return a table with two columns (cuberoot, logarithm) where the values in cuberoot are the cube root of those provided in number1 and the values in logarithm are changed to the natural logarithm of those in number2.
+*/
+select 
+power(number1::float, (1/3.0)) as cuberoot,
+ln(number2::float) as logarithm
+from decimals;
