@@ -17,7 +17,7 @@ export const seqArr = (n: number): number[] => {
     for (let i = n; i > 0; i--) {
         arr.unshift(seq(i))
     }
-    return arr.map((n:any,i:any)=>i < arr.length - 1 ? arr[i+1] - n : seq(arr.length + 1) - n)
+    return arr.map((n:any,i:any)=>i < arr.length - 1 ? arr[i+1] - n : 0)
 }
 
 export const countOnes = (n: number):number => {
@@ -25,7 +25,9 @@ export const countOnes = (n: number):number => {
 }
 
 export const maxPn = (n: number):number => {
-  return n
+    const arr = seqArr(n)
+    console.log(`n=${n}`, arr)
+  return Math.max(...arr)
 }
 
 export const anOverAverage = (n: number):number => {
