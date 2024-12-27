@@ -1,0 +1,3 @@
+const antBridge = (ants, terrain) => {
+    
+}
