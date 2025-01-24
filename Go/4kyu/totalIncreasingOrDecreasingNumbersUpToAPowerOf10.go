@@ -82,6 +82,7 @@ func comb(a, b int) uint64 {
 		den *= uint64(i + 1)
 	}
   if num < 0 || den < 0 {
+    //fmt
     fmt.Printf("NUM: %v\nDEN %v\n---------------\n", num, den)
   }
 	return uint64(num / den) 
