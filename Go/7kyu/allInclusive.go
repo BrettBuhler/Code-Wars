@@ -8,8 +8,21 @@ import (
 
 func main() {
 
-	ret := ContainAllRots("bsjq", []string{"bsjq", "qbsj", "sjqb", "twZNsslC", "jqbs"})
+	ret := testContainAllRots("abccdefg", []string{"cdefgabc", "sdfsdf", "dsfds", "sfdf", "dsf", "sdfds"})
 	fmt.Println("RET:", ret)
+}
+func testContainAllRots (rot_me string, arr []string) bool {
+  allRots := rot_me + rot_me
+  vals := make(map[string]struct{bool})
+  for _, str := range arr {
+    if strings.Contains(allRots, str) {
+      vals[str] = struct{bool}{true}
+    }
+  }
+  if len(vals) == len(rot_me) {
+    return true
+  }
+  return false
 }
 
 func ContainAllRots(rot_me string, arr []string) bool {
