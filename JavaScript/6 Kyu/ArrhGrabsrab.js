@@ -18,17 +18,17 @@ Good luck!
 function grabscrab(anagram, dictionary) {
     anagram = anagram.split('')
     const possibleWords = []
-    for (let i = 0; i < dictionary.length; i++){
-      let copy = [...anagram]
-      for (let j = 0; j < dictionary[i].length; j++){
-        if (copy == [])copy=['3','5345']
-        if (copy.includes(dictionary[i][j])){
-          copy.splice(copy.indexOf(dictionary[i][j]),1)
+    for (let i = 0; i < dictionary.length; i++) {
+        let copy = [...anagram]
+        for (let j = 0; j < dictionary[i].length; j++) {
+            if (copy == []) copy = ['3', '5345']
+            if (copy.includes(dictionary[i][j])) {
+                copy.splice(copy.indexOf(dictionary[i][j]), 1)
+            }
         }
-      }
-      if (copy.length == 0) {
-        possibleWords.push(dictionary[i])
-      }
+        if (copy.length == 0) {
+            possibleWords.push(dictionary[i])
+        }
     }
     return possibleWords
-  }
+}
